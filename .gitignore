@@ -1,3 +1,14 @@
 .env
 
 env/
+
+# Local databases
+**/mydb/
+**/vector_db/
+
+# SQLite databases
+**/*.db
+
+# Python
+__pycache__/
+*.pyc
