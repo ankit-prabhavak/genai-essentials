@@ -14,3 +14,4 @@ flask
 beautifulsoup4
 Wikipedia-API
 langchain_text_splitters
+langchain-chroma
