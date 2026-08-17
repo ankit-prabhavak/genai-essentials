@@ -8,3 +8,9 @@ streamlit
 langchain_ollama
 langchain-groq	
 langchain-community
+langgraph
+pypdf
+flask
+beautifulsoup4
+Wikipedia-API
+langchain_text_splitters

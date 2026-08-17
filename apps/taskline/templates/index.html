@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Taskline — AI Task Assistant</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Elms+Sans:ital,wght@0,100..900;1,100..900&family=Fredoka:wght@300..700&family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&family=Libre+Baskerville:ital,wght@0,400..700;1,400..700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Styles -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+
+  <body>
+    <div class="app">
+      <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
+      <aside class="sidebar">
+        <!-- Brand -->
+        <div class="sidebar-brand">
+          <div class="brand-mark">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+
+          <div class="brand-info">
+            <h1>Taskline</h1>
+            <span>AI Task Assistant</span>
+          </div>
+        </div>
+
+        <!-- New Conversation -->
+        <button
+          id="resetBtn"
+          class="new-chat-btn"
+          type="button"
+          title="Start a new conversation"
+        >
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+          </svg>
+
+          <span>New conversation</span>
+        </button>
+
+        <!-- Navigation -->
+        <nav class="sidebar-nav" aria-label="Main navigation">
+          <div class="nav-section">
+            <span class="nav-label"> WORKSPACE </span>
+
+            <button class="nav-item active" type="button">
+              <svg
+                viewBox="0 0 24 24"
+                width="17"
+                height="17"
+                aria-hidden="true"
+              >
+                <path
+                  fill="currentColor"
+                  d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"
+                />
+                <path
+                  fill="currentColor"
+                  d="M7 7h10v2H7zm0 4h10v2H7zm0 4h6v2H7z"
+                />
+              </svg>
+
+              <span>Task Assistant</span>
+            </button>
+          </div>
+
+          <div class="nav-section">
+            <span class="nav-label"> QUICK ACTIONS </span>
+
+            <button
+              class="nav-item"
+              type="button"
+              data-prompt="Show me my pending tasks"
+            >
+              <span class="nav-icon pending-icon"></span>
+
+              <span>Pending tasks</span>
+            </button>
+
+            <button
+              class="nav-item"
+              type="button"
+              data-prompt="Show me my in-progress tasks"
+            >
+              <span class="nav-icon progress-icon"></span>
+
+              <span>In progress</span>
+            </button>
+
+            <button
+              class="nav-item"
+              type="button"
+              data-prompt="Show me my completed tasks"
+            >
+              <span class="nav-icon completed-icon"></span>
+
+              <span>Completed</span>
+            </button>
+          </div>
+        </nav>
+
+        <!-- Sidebar Bottom -->
+        <div class="sidebar-bottom">
+          <div class="connection-card">
+            <span
+              class="connection-dot"
+              id="statusDot"
+              title="Connected"
+            ></span>
+
+            <div>
+              <strong>System online</strong>
+              <span>Taskline is ready</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+      <section class="main-panel">
+        <!-- =================================================
+             HEADER
+             ================================================= -->
+
+        <header class="app-header">
+          <div class="header-left">
+            <div class="mobile-brand-mark">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+
+            <div>
+              <div class="header-title-row">
+                <h2>Task Assistant</h2>
+
+                <span class="online-badge">
+                  <span></span>
+                  Online
+                </span>
+              </div>
+
+              <p>Manage your tasks using natural language.</p>
+            </div>
+          </div>
+
+          <div class="header-actions">
+            <!-- Voice output -->
+            <button
+              id="speakToggle"
+              class="icon-btn"
+              type="button"
+              aria-pressed="false"
+              title="Read replies aloud"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="19"
+                height="19"
+                aria-hidden="true"
+              >
+                <path fill="currentColor" d="M4 9v6h4l5 5V4L8 9H4z" />
+
+                <path
+                  id="speakWaves"
+                  fill="currentColor"
+                  d="M16.5 8.5a5 5 0 0 1 0 7l-1-1a3.5 3.5 0 0 0 0-5l1-1z"
+                  opacity="0.55"
+                />
+              </svg>
+            </button>
+
+            <!-- New conversation -->
+            <button
+              class="header-new-btn"
+              type="button"
+              onclick="document.getElementById('resetBtn').click()"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="17"
+                height="17"
+                aria-hidden="true"
+              >
+                <path
+                  fill="currentColor"
+                  d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
+                />
+              </svg>
+
+              <span>New chat</span>
+            </button>
+          </div>
+        </header>
+
+        <!-- =================================================
+             CHAT AREA
+             ================================================= -->
+
+        <main class="chat-area" id="chatLog" aria-live="polite">
+          <!-- Welcome state -->
+
+          <section class="welcome-state" id="welcomeState">
+            <div class="welcome-icon">
+              <svg
+                viewBox="0 0 24 24"
+                width="27"
+                height="27"
+                aria-hidden="true"
+              >
+                <path
+                  fill="currentColor"
+                  d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"
+                />
+
+                <path
+                  fill="currentColor"
+                  d="M7 12h2v5H7zm4-4h2v9h-2zm4 2h2v7h-2z"
+                />
+              </svg>
+            </div>
+
+            <span class="welcome-eyebrow"> YOUR PERSONAL TASK ASSISTANT </span>
+
+            <h3>
+              What would you like<br />
+              to get done?
+            </h3>
+
+            <p>
+              I can create, update, complete, delete, and organize your tasks
+              using simple natural language.
+            </p>
+
+            <!-- Quick prompts -->
+
+            <div class="quick-prompts">
+              <button
+                class="quick-prompt"
+                type="button"
+                data-prompt="Show me all my tasks"
+              >
+                <span class="prompt-icon">
+                  <svg viewBox="0 0 24 24" width="17" height="17">
+                    <path
+                      fill="currentColor"
+                      d="M4 5h16v2H4zm0 6h16v2H4zm0 6h16v2H4z"
+                    />
+                  </svg>
+                </span>
+
+                <span> Show my tasks </span>
+              </button>
+
+              <button
+                class="quick-prompt"
+                type="button"
+                data-prompt="Show me my pending tasks"
+              >
+                <span class="prompt-icon">
+                  <svg viewBox="0 0 24 24" width="17" height="17">
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="8"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    />
+                  </svg>
+                </span>
+
+                <span> Pending tasks </span>
+              </button>
+
+              <button
+                class="quick-prompt"
+                type="button"
+                data-prompt="Create a new task"
+              >
+                <span class="prompt-icon">
+                  <svg viewBox="0 0 24 24" width="17" height="17">
+                    <path
+                      fill="currentColor"
+                      d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
+                    />
+                  </svg>
+                </span>
+
+                <span> Create a task </span>
+              </button>
+
+              <button
+                class="quick-prompt"
+                type="button"
+                data-prompt="Show me my completed tasks"
+              >
+                <span class="prompt-icon">
+                  <svg viewBox="0 0 24 24" width="17" height="17">
+                    <path
+                      fill="currentColor"
+                      d="M9 16.2l-3.5-3.5L4 14.2l5 5L20 8.2 18.5 6.7z"
+                    />
+                  </svg>
+                </span>
+
+                <span> Completed tasks </span>
+              </button>
+            </div>
+          </section>
+
+          <!-- =================================================
+                 Initial assistant message
+                 ================================================= -->
+
+          <div class="message-row assistant-row">
+            <div class="avatar assistant-avatar">
+              <span class="avatar-dot"></span>
+            </div>
+
+            <div class="message-content">
+              <div class="message-meta">
+                <strong>Taskline</strong>
+
+                <span class="msg-time"></span>
+              </div>
+
+              <div class="message-bubble">
+                <p>Hi! I'm your task assistant.</p>
+
+                <p>
+                  You can ask me to create, update, complete, delete, or find
+                  tasks.
+                </p>
+
+                <div class="example-message">
+                  <span>Try:</span>
+
+                  <em> "Add a task to prepare the Q3 slides." </em>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+
+        <!-- =================================================
+             COMPOSER
+             ================================================= -->
+
+        <footer class="composer">
+          <div class="composer-wrapper">
+            <form id="chatForm" class="composer-form">
+              <!-- Voice input -->
+
+              <button
+                type="button"
+                id="micBtn"
+                class="mic-btn"
+                title="Speak your message"
+                aria-label="Speak your message"
+                aria-pressed="false"
+              >
+                <span class="mic-icon">
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="19"
+                    height="19"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill="currentColor"
+                      d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3z"
+                    />
+
+                    <path
+                      fill="currentColor"
+                      d="M17.3 11a5.3 5.3 0 0 1-10.6 0H5a7 7 0 0 0 6 6.92V21H8v2h8v-2h-3v-3.08A7 7 0 0 0 19 11h-1.7z"
+                    />
+                  </svg>
+                </span>
+
+                <!-- Recording waveform -->
+
+                <span class="recording-wave" aria-hidden="true">
+                  <span class="wave-bar"></span>
+                  <span class="wave-bar"></span>
+                  <span class="wave-bar"></span>
+                  <span class="wave-bar"></span>
+                  <span class="wave-bar"></span>
+                </span>
+              </button>
+
+              <!-- Input -->
+
+              <textarea
+                id="messageInput"
+                class="composer-input"
+                placeholder="Ask Taskline to manage your tasks..."
+                rows="1"
+                autofocus
+                aria-label="Message Taskline"
+              ></textarea>
+
+              <!-- Send -->
+
+              <button
+                type="submit"
+                id="sendBtn"
+                class="send-btn"
+                title="Send message"
+                aria-label="Send message"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="19"
+                  height="19"
+                  aria-hidden="true"
+                >
+                  <path fill="currentColor" d="M3 20l18-8L3 4v6l12 2-12 2z" />
+                </svg>
+              </button>
+            </form>
+
+            <div class="composer-footer">
+              <p class="composer-hint" id="composerHint">
+                Enter to send · Shift + Enter for a new line
+              </p>
+
+              <span class="powered-by"> AI-powered task management </span>
+            </div>
+          </div>
+        </footer>
+      </section>
+    </div>
+
+    <!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  </body>
+</html>

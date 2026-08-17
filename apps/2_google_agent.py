@@ -5,6 +5,7 @@ from langchain_community.utilities import GoogleSerperAPIWrapper
 from langchain_core.tools import tool
 from langchain_groq import ChatGroq
 from langchain.agents import create_agent
+from langgraph.checkpoint.memory import MemorySaver
 
 load_dotenv()
 
@@ -13,6 +14,7 @@ llm = ChatGroq(
 )
 
 search = GoogleSerperAPIWrapper()
+memory_saver = MemorySaver()
 
 
 @tool
@@ -28,7 +30,8 @@ def google_search(query: str):
 agent = create_agent(
     model=llm,
     tools=[google_search],
-    system_prompt="You are an agent that can search Google to answer questions. When you need current information, call the google_search tool with a concise query."
+    system_prompt="You are an agent that can search Google to answer questions. When you need current information, call the google_search tool with a concise query.",
+    checkpointer=memory_saver
 )
 
 
@@ -38,7 +41,7 @@ while True:
         print("Good Bye")
         break
     try:
-        res = agent.invoke({"messages": [{"role": "user", "content": query}]})
+        res = agent.invoke({"messages": [{"role": "user", "content": query}]}, {"configurable": {"thread_id": "ab123"}})
         print("\nHere is your search result:\n")
         print(res["messages"][-1].content)
     except Exception as e:

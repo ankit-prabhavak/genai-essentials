@@ -1,0 +1,7 @@
+flask>=3.0
+python-dotenv>=1.0
+langchain>=1.0
+langchain-groq>=0.2
+langchain-community>=0.3
+langgraph>=0.2
+sqlalchemy>=2.0
